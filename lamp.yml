@@ -1,0 +1,55 @@
+---
+- hosts: centos
+  remote_user: ansible
+  become: yes
+  become_method: sudo
+
+  tasks:
+
+ #Paquete de apache
+ 
+  - name: instalar paquetes apache
+    yum:
+      name: "{{ item }}"
+      state: present
+
+#Instalacion Mariadb
+
+
+#Iniciar HTTP
+  - name: iniciar http
+    service:
+      name: httpd
+      state: started
+
+#Virtual host
+
+  - name: generar virtualhost con template
+    template:
+     src: ./vhost_template.j2
+     dest: /etc/httpd/vhosts.d
+     mode: 0640
+     owner: ansible
+     group: ansible
+
+#Puertos abiertos 80 y 443
+  - name: Puertos abiertos
+    firewalld:
+      service: "{{ item }}"
+      state: enabled
+      permanent: yes
+      immediate: yes
+    loop:
+    - https
+    - http
+
+# Reinicio servicios
+
+  - name: reiniciar httpd si hay un cambio en virtualhost
+    service: 
+      name: httpd
+      state: restarted
+    notify: http reiniciado
+
+
+
