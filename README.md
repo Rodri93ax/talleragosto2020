@@ -1,1 +1,1 @@
-obligatorio Linux 2020
+Taller Linux 2020
