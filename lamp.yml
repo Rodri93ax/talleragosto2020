@@ -4,24 +4,17 @@
   become: yes
   become_method: sudo
 
-  tasks:
-
- #Paquete de apache
+  vars_files:
+  - ./templates/loadbalancer.yml
  
-  - name: instalar paquetes apache
-    yum:
-      name: "{{ item }}"
-      state: present
+  roles:
+  - role: apache-centos
+    when: ansible_facts ['os_family'] == "RedHat"
+  - role: apache-debian
+    when: ansible_facts ['os_family'] == "Debian"
 
-#Instalacion Mariadb
-
-
-#Iniciar HTTP
-  - name: iniciar http
-    service:
-      name: httpd
-      state: started
-
+  tasks:
+ 
 #Virtual host
 
   - name: generar virtualhost con template
@@ -52,4 +45,22 @@
     notify: http reiniciado
 
 
+#Balance carga
+  - name: Create loadbalancer configuration
+    template:
+      src: templates/loadbalancer.j2
+      dest: /etc/httpd/vhost.d/loadbalancer.conf
+      owner: root
+      mode: 0644
+    when: aansible_facts ['os_family'] == "RedHat"
+    notify: Restart httpd
 
+  - name: Create loadbalancer configuration
+    template: 
+      src: templates/apache.j2
+      dest: /etc/apache2/sites-enabled/000-default.conf
+      owner: root
+      mode: 0644
+    when: ansible_facts ['os_family'] == "Debian"
+    notify: Restart apache2
+ 

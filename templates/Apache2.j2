@@ -6,21 +6,14 @@
 </Proxy>
 
 <VirtualHost *:80>
-  ProxyPreserveHost On
-  ProxyPass /balancer-manager !
   ProxyPass / balancer://{{ nombre_cluster }}/
   ProxyPassReverse / http://{{ nombre_cluster }}/
-
-  <Location "/balancer-manager">
-      SetHandler balancer-manager
-      Require ip {{ red_autorizada }}
-  </Location>
 
   ServerName {{ server }}
   ServerAdmin {{ hostmaster }}
   DocumentRoot /var/www/{{ sitio }}/html
-  CustomLog /var/log/httpd/{{ sitio }}_access.log combined
-  ErrorLog /var/log/httpd/{{ sitio }}_error.log
+  CustomLog /var/log/apache2/{{ sitio }}_access.log combined
+  ErrorLog /var/log/apache2/{{ sitio }}_error.log
   <Directory /var/www/{{ sitio }}/html>
     Options Indexes FollowSymLinks
     AllowOverride None

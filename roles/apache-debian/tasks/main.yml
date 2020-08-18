@@ -1,0 +1,39 @@
+---
+  - name: Install Obligatorio software
+    apt:
+      name: apache2
+      state: latest
+      update_cache: yes
+
+  - name: Create virtualhost content directories
+    file:
+      path: "{{ item }}"
+      recurse: yes
+      state: directory
+      mode: '0755'
+    loop:
+      - /var/www/"{{ sitio }}"
+      - /var/www/"{{ sitio }}"/html
+      - /var/www/"{{ sitio }}"/cgi-bin
+
+  - name: Load apache modules for proxy in Ubuntu
+    apache2_module:
+      name: proxy
+      state: present
+    notify: Restart apache2
+  
+  - name: Start and enable apache2
+    service:
+      name: apache2
+      state: started
+      enabled: yes
+
+  - name: Configure firewall
+    ufw:
+      rule: allow
+      port: "{{ item }}"
+      state: enabled
+    loop:
+      - '80'
+      - '443'
+      - '22'
