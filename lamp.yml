@@ -13,17 +13,8 @@
   - role: apache-debian
     when: ansible_facts ['os_family'] == "Debian"
 
-  tasks:
- 
-#Virtual host
 
-  - name: generar virtualhost con template
-    template:
-     src: ./vhost_template.j2
-     dest: /etc/httpd/vhosts.d
-     mode: 0640
-     owner: ansible
-     group: ansible
+  tasks:
 
 #Puertos abiertos 80 y 443
   - name: Puertos abiertos
@@ -36,14 +27,6 @@
     - https
     - http
 
-# Reinicio servicios
-
-  - name: reiniciar httpd si hay un cambio en virtualhost
-    service: 
-      name: httpd
-      state: restarted
-    notify: http reiniciado
-
 
 #Balance carga
   - name: Create loadbalancer configuration
@@ -52,12 +35,12 @@
       dest: /etc/httpd/vhost.d/loadbalancer.conf
       owner: root
       mode: 0644
-    when: aansible_facts ['os_family'] == "RedHat"
+    when: ansible_facts ['os_family'] == "RedHat"
     notify: Restart httpd
 
   - name: Create loadbalancer configuration
     template: 
-      src: templates/apache.j2
+      src: templates/apache2.j2
       dest: /etc/apache2/sites-enabled/000-default.conf
       owner: root
       mode: 0644

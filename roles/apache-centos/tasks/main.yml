@@ -1,5 +1,6 @@
 ---
 # tasks file for roles/apache-centos
+
 - name: Install Apache Server
   yum:
     name: httpd
@@ -7,10 +8,10 @@
     
 - name: Create virtualhost config directory
   file:
-    path: /etc/httpd/vhost.d
-    state: directory
-    mode: '0755'
-    owner: root
+     path: /etc/httpd/vhost.d
+     state: directory
+     mode: '0755'
+     owner: root
 
 - name: Add virtualhost config directory to httpd.conf
   lineinfile:

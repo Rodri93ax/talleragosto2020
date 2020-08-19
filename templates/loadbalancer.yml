@@ -1,0 +1,10 @@
+nombre_cluster: elbalanceador
+nodo1: 192.168.56.104
+nodo2: 192.168.56.105
+puerto1: 8080
+puerto2: 8080
+red_autorizada: 192.168.56.0/24
+
+sitio: Prueba
+server: www.pruebataller.com.uy
+hostmaster: prueba@ort.edu.uy

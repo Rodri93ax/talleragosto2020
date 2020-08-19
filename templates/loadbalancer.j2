@@ -1,29 +1,18 @@
-<Proxy balancer://{{ nombre_cluster }}>
-
-    BalancerMember http://{{ node1 }}:{{ port1 }}/
-
-    BalancerMember http://{{ node2 }}:{{ port2 }}/
-</Proxy>
-
 <VirtualHost *:80>
-  ProxyPreserveHost On
-  ProxyPass /balancer-manager !
-  ProxyPass / balancer://{{ nombre_cluster }}/
-  ProxyPassReverse / http://{{ nombre_cluster }}/
+    <Proxy balancer://{{ nombre_cluster }}>
+        BalancerMember http://{{ centos }}:{{ puerto1 }}
+        BalancerMember http://{{ ubuntu }}:{{ puerto2 }}
 
-  <Location "/balancer-manager">
-      SetHandler balancer-manager
-      Require ip {{ red_autorizada }}
-  </Location>
+        Require all granted
+    </Proxy>
 
-  ServerName {{ server }}
-  ServerAdmin {{ hostmaster }}
-  DocumentRoot /var/www/{{ sitio }}/html
-  CustomLog /var/log/httpd/{{ sitio }}_access.log combined
-  ErrorLog /var/log/httpd/{{ sitio }}_error.log
-  <Directory /var/www/{{ sitio }}/html>
-    Options Indexes FollowSymLinks
-    AllowOverride None
-    Require all granted
-  </Directory>
+    ProxyPreserveHost on
+    ProxyPass /balancer-manager !
+    ProxyPass / balancer://{{ nombre_cluster }}/
+
+    <Location "/balancer-manager">
+        SetHandler balancer-manger
+        Require ip {{ red_autorizada}}
+    </Location>
+
 </VirtualHost>
