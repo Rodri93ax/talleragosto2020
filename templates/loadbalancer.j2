@@ -1,8 +1,24 @@
 <VirtualHost *:80>
-    <Proxy balancer://{{ nombre_cluster }}>
-        BalancerMember http://{{ centos }}:{{ puerto1 }}
-        BalancerMember http://{{ ubuntu }}:{{ puerto2 }}
+  ProxyPass / balancer://{{ nombre_cluster }}/
+  ProxyPassReverse / http://{{ nombre_cluster }}/
 
+  ServerName {{ server }} 
+  ServerAdmin {{ hostmaster }}
+  DocumentRoot /var/www/{{ prueba }}/html
+  CustomLog /var/log/apache2/{{ prueba }}_access.log combined
+  ErrorLog /var/log/apache2/{{ prueba }}_error.log
+  <Directory /var/www/{{ prueba }}/html>
+    Options Indexes FollowSymLinks
+    AllowOverride None
+    Require all granted
+   </Directory>
+</VirtualHost>
+
+<VirtualHost *:80>
+    <Proxy balancer://{{ nombre_cluster }}>
+        BalancerMember http://{{ nodo1 }}:{{ puerto1 }}
+        BalancerMember http://{{ nodo2 }}:{{ puerto2 }}
+       
         Require all granted
     </Proxy>
 
@@ -12,7 +28,7 @@
 
     <Location "/balancer-manager">
         SetHandler balancer-manger
-        Require ip {{ red_autorizada}}
+        Require ip {{ red_autorizada }}
     </Location>
 
 </VirtualHost>

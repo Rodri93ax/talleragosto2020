@@ -5,6 +5,6 @@ puerto1: 8080
 puerto2: 8080
 red_autorizada: 192.168.56.0/24
 
-sitio: Prueba
+sitio: prueba
 server: www.pruebataller.com.uy
 hostmaster: prueba@ort.edu.uy
